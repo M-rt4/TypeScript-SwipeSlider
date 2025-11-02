@@ -35,7 +35,7 @@ npx react-native link react-native-vector-icons
 
 ## Features
 
-✅ Center-positioned button that can be swiped left and right
+✅ Center-positioned button that can be swiped left and right\n
 ✅ Left and right options
 ✅ Fully customizable style properties
 ✅ Animated return to center
@@ -443,3 +443,4 @@ This will disable the chevron animation and the component will work without the 
 ## License
 
 This component was developed for the UniMeetPoint project.
+
