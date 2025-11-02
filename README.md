@@ -35,17 +35,17 @@ npx react-native link react-native-vector-icons
 
 ## Features
 
-✅ Center-positioned button that can be swiped left and right\n
-✅ Left and right options
-✅ Fully customizable style properties
-✅ Animated return to center
-✅ Adjustable swipe sensitivity
-✅ Different active colors for each direction
-✅ Separate callback functions (onSwipeLeft & onSwipeRight)
-✅ Chevron idle animation - wave effect from center to edges
-✅ Smart visibility - chevrons only visible when button is centered
-✅ Auto transition - chevrons fade out and text fades in when button is swiped
-✅ TypeScript support
+- ✅ Center-positioned button that can be swiped left and right
+- ✅ Left and right options
+- ✅ Fully customizable style properties
+- ✅ Animated return to center
+- ✅ Adjustable swipe sensitivity
+- ✅ Different active colors for each direction
+- ✅ Separate callback functions (onSwipeLeft & onSwipeRight)
+- ✅ Chevron idle animation - wave effect from center to edges
+- ✅ Smart visibility - chevrons only visible when button is centered
+- ✅ Auto transition - chevrons fade out and text fades in when button is swiped
+- ✅ TypeScript support
 
 ## Basic Usage
 
@@ -443,4 +443,5 @@ This will disable the chevron animation and the component will work without the 
 ## License
 
 This component was developed for the UniMeetPoint project.
+
 
