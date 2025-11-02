@@ -2,6 +2,52 @@
 
 A customizable swipe-based decision slider component.
 
+## 🤝 Contributing & Help Wanted
+
+This component is open for contributions! Whether you have ideas for new features, spot bugs that need fixing, or want to improve the code, **pull requests are welcome!**
+
+### 📦 Help Needed: NPM Package
+
+I'm currently looking for help to **publish this component as an NPM package**. If you have experience with:
+- Creating and publishing NPM packages
+- Setting up proper build configurations for React Native components
+- Writing package.json with correct peer dependencies
+- Setting up CI/CD for automated releases
+
+**Your help would be greatly appreciated!** Feel free to open an issue or submit a PR with setup instructions.
+
+### 💡 Feature Ideas Welcome
+
+Have an idea for a new feature or improvement? Some areas where contributions would be especially valuable:
+- Additional animation effects
+- More customization options
+- Performance optimizations
+- Accessibility improvements (screen readers, haptic feedback)
+- Better documentation or examples
+- Tests (unit, integration, or visual regression)
+
+### 🐛 Found a Bug?
+
+If you find a bug, please:
+1. Check if it's already reported in Issues
+2. If not, open a new issue with:
+   - A clear description of the problem
+   - Steps to reproduce
+   - Expected vs actual behavior
+   - Screenshots/videos if applicable
+
+### 📝 How to Contribute
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+**All contributions, no matter how small, are valued and appreciated!** 🙏
+
+---
+
 ## Installation & Dependencies
 
 ### Required Dependencies
@@ -443,5 +489,3 @@ This will disable the chevron animation and the component will work without the 
 ## License
 
 This component was developed for the UniMeetPoint project.
-
-
