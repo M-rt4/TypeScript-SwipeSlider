@@ -1,39 +1,70 @@
-# SwipeSlider Komponenti
+# SwipeSlider Component
 
-Özelleştirilebilir sağa-sola kaydırmalı karar verme komponenti.
+A customizable swipe-based decision slider component.
 
-## Özellikler
+## Installation & Dependencies
 
-✅ Ortada sağa ve sola kaydırılabilen buton
-✅ Sol ve sağ seçenekler
-✅ Tam özelleştirilebilir stil özellikleri
-✅ Animasyonlu geri dönüş
-✅ Kaydırma hassasiyeti ayarlanabilir
-✅ Her yön için farklı aktif renk desteği
-✅ Ayrı callback fonksiyonları (onSwipeLeft & onSwipeRight)
-✅ Chevron idle animasyonu - merkezden dışa doğru dalga efekti
-✅ Akıllı görünürlük - chevronlar sadece buton merkezdeyken görünür
-✅ Otomatik geçiş - buton kaydırıldığında chevronlar gizlenir, metinler görünür
-✅ TypeScript desteği
+### Required Dependencies
 
-## Temel Kullanım
+This component requires the following packages:
+
+```bash
+# For Expo projects
+npm install @expo/vector-icons
+
+# For React Native CLI projects
+npm install react-native-vector-icons
+npx react-native link react-native-vector-icons
+```
+
+**Important:** This component uses chevron icons from `@expo/vector-icons` (Entypo icon set) for the idle animation. If you're using this component outside of Expo:
+- Install `react-native-vector-icons` instead
+- You may need to modify the import statement in `SwipeSlider.tsx`:
+  ```tsx
+  // Change this:
+  import { Entypo } from '@expo/vector-icons';
+  
+  // To this (for React Native CLI):
+  import Entypo from 'react-native-vector-icons/Entypo';
+  ```
+
+### Peer Dependencies
+
+- React Native (with Animated API support)
+- React (16.8+ for hooks support)
+
+## Features
+
+✅ Center-positioned button that can be swiped left and right
+✅ Left and right options
+✅ Fully customizable style properties
+✅ Animated return to center
+✅ Adjustable swipe sensitivity
+✅ Different active colors for each direction
+✅ Separate callback functions (onSwipeLeft & onSwipeRight)
+✅ Chevron idle animation - wave effect from center to edges
+✅ Smart visibility - chevrons only visible when button is centered
+✅ Auto transition - chevrons fade out and text fades in when button is swiped
+✅ TypeScript support
+
+## Basic Usage
 
 ```tsx
 import SwipeSlider from '@/app/components/SwipeSlider';
 
 function MyComponent() {
     const handleSwipeLeft = () => {
-        console.log('Kullanıcı sola kaydırdı');
+        console.log('User swiped left');
     };
 
     const handleSwipeRight = () => {
-        console.log('Kullanıcı sağa kaydırdı');
+        console.log('User swiped right');
     };
 
     return (
         <SwipeSlider
-            leftOption="Hayır"
-            rightOption="Evet"
+            leftOption="No"
+            rightOption="Yes"
             onSwipeLeft={handleSwipeLeft}
             onSwipeRight={handleSwipeRight}
             activeBackgroundColorLeft="#FF4444"
@@ -43,73 +74,73 @@ function MyComponent() {
 }
 ```
 
-## Prop Listesi
+## Props List
 
-### Temel Props
+### Basic Props
 
-| Prop | Tip | Varsayılan | Açıklama |
-|------|-----|-----------|----------|
-| `leftOption` | `string` | **Zorunlu** | Sol taraftaki seçenek metni |
-| `rightOption` | `string` | **Zorunlu** | Sağ taraftaki seçenek metni |
-| `onSwipeLeft` | `() => void` | `undefined` | Sola kaydırma callback fonksiyonu |
-| `onSwipeRight` | `() => void` | `undefined` | Sağa kaydırma callback fonksiyonu |
-| `disabled` | `boolean` | `false` | Slider'ı devre dışı bırakır |
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `leftOption` | `string` | **Required** | Text for left option |
+| `rightOption` | `string` | **Required** | Text for right option |
+| `onSwipeLeft` | `() => void` | `undefined` | Callback function for left swipe |
+| `onSwipeRight` | `() => void` | `undefined` | Callback function for right swipe |
+| `disabled` | `boolean` | `false` | Disables the slider |
 
-### Container (Dış Kutu) Style Props
+### Container Style Props
 
-| Prop | Tip | Varsayılan | Açıklama |
-|------|-----|-----------|----------|
-| `containerStyle` | `StyleProp<ViewStyle>` | `undefined` | Özel container stili |
-| `containerWidth` | `number` | `SCREEN_WIDTH * 0.85` | Container genişliği |
-| `containerHeight` | `number` | `60` | Container yüksekliği |
-| `containerBackgroundColor` | `string` | `'#E0E0E0'` | Container arka plan rengi |
-| `containerBorderRadius` | `number` | `30` | Container köşe yuvarlaklığı |
-| `containerBorderWidth` | `number` | `0` | Container border kalınlığı |
-| `containerBorderColor` | `string` | `'transparent'` | Container border rengi |
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `containerStyle` | `StyleProp<ViewStyle>` | `undefined` | Custom container style |
+| `containerWidth` | `number` | `SCREEN_WIDTH * 0.85` | Container width |
+| `containerHeight` | `number` | `60` | Container height |
+| `containerBackgroundColor` | `string` | `'#E0E0E0'` | Container background color |
+| `containerBorderRadius` | `number` | `30` | Container border radius |
+| `containerBorderWidth` | `number` | `0` | Container border width |
+| `containerBorderColor` | `string` | `'transparent'` | Container border color |
 
-### Thumb (Kaydırma Butonu) Style Props
+### Thumb (Swipe Button) Style Props
 
-| Prop | Tip | Varsayılan | Açıklama |
-|------|-----|-----------|----------|
-| `thumbSize` | `number` | `50` | Buton boyutu (genişlik ve yükseklik) |
-| `thumbBackgroundColor` | `string` | `'#FFFFFF'` | Buton arka plan rengi |
-| `thumbBorderRadius` | `number` | `25` | Buton köşe yuvarlaklığı |
-| `thumbBorderWidth` | `number` | `2` | Buton border kalınlığı |
-| `thumbBorderColor` | `string` | `'#CCCCCC'` | Buton border rengi |
-| `thumbStyle` | `StyleProp<ViewStyle>` | `undefined` | Özel buton stili |
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `thumbSize` | `number` | `50` | Button size (width and height) |
+| `thumbBackgroundColor` | `string` | `'#FFFFFF'` | Button background color |
+| `thumbBorderRadius` | `number` | `25` | Button border radius |
+| `thumbBorderWidth` | `number` | `2` | Button border width |
+| `thumbBorderColor` | `string` | `'#CCCCCC'` | Button border color |
+| `thumbStyle` | `StyleProp<ViewStyle>` | `undefined` | Custom button style |
 
-### Seçenek Metni Style Props
+### Option Text Style Props
 
-| Prop | Tip | Varsayılan | Açıklama |
-|------|-----|-----------|----------|
-| `optionTextStyle` | `StyleProp<TextStyle>` | `undefined` | Her iki seçenek için metin stili |
-| `leftOptionTextStyle` | `StyleProp<TextStyle>` | `undefined` | Sadece sol seçenek metin stili |
-| `rightOptionTextStyle` | `StyleProp<TextStyle>` | `undefined` | Sadece sağ seçenek metin stili |
-| `optionFontSize` | `number` | `16` | Seçenek metin boyutu |
-| `optionColor` | `string` | `'#333333'` | Seçenek metin rengi |
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `optionTextStyle` | `StyleProp<TextStyle>` | `undefined` | Text style for both options |
+| `leftOptionTextStyle` | `StyleProp<TextStyle>` | `undefined` | Text style for left option only |
+| `rightOptionTextStyle` | `StyleProp<TextStyle>` | `undefined` | Text style for right option only |
+| `optionFontSize` | `number` | `16` | Option text size |
+| `optionColor` | `string` | `'#333333'` | Option text color |
 
-### Davranış Props
+### Behavior Props
 
-| Prop | Tip | Varsayılan | Açıklama |
-|------|-----|-----------|----------|
-| `swipeThreshold` | `number` | `0.4` | Kaydırma hassasiyeti (0-1 arası, 0.5 = %50) |
-| `animationDuration` | `number` | `300` | Animasyon süresi (milisaniye) |
-| `activeBackgroundColorLeft` | `string` | `'#FF4444'` | Sola kaydırıldığında gösterilen arka plan rengi |
-| `activeBackgroundColorRight` | `string` | `'#4CAF50'` | Sağa kaydırıldığında gösterilen arka plan rengi |
-| `enableIdleAnimation` | `boolean` | `true` | Boşta chevron animasyonunu etkinleştirir |
-| `idleAnimationDuration` | `number` | `1200` | Chevron animasyon döngü süresi (milisaniye) |
-| `idleChevronColor` | `string` | `'#999999'` | Chevron oklarının rengi |
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `swipeThreshold` | `number` | `0.4` | Swipe sensitivity (0-1 range, 0.5 = 50%) |
+| `animationDuration` | `number` | `300` | Animation duration (milliseconds) |
+| `activeBackgroundColorLeft` | `string` | `'#FF4444'` | Background color shown when swiping left |
+| `activeBackgroundColorRight` | `string` | `'#4CAF50'` | Background color shown when swiping right |
+| `enableIdleAnimation` | `boolean` | `true` | Enables idle chevron animation |
+| `idleAnimationDuration` | `number` | `1200` | Chevron animation loop duration (milliseconds) |
+| `idleChevronColor` | `string` | `'#999999'` | Chevron arrows color |
 
-## Kullanım Örnekleri
+## Usage Examples
 
-### 1. Onay/Red Slider
+### 1. Approve/Reject Slider
 
 ```tsx
 <SwipeSlider
-    leftOption="❌ Red"
-    rightOption="✓ Onayla"
-    onSwipeLeft={() => console.log('Reddedildi')}
-    onSwipeRight={() => console.log('Onaylandı')}
+    leftOption="❌ Reject"
+    rightOption="✓ Approve"
+    onSwipeLeft={() => console.log('Rejected')}
+    onSwipeRight={() => console.log('Approved')}
     containerBackgroundColor="#F5F5F5"
     activeBackgroundColorLeft="#FF4444"
     activeBackgroundColorRight="#4CAF50"
@@ -117,14 +148,14 @@ function MyComponent() {
 />
 ```
 
-### 2. Özel Renkli Tema (Mor/Pembe)
+### 2. Custom Color Theme (Purple/Pink)
 
 ```tsx
 <SwipeSlider
-    leftOption="Hayır"
-    rightOption="Evet"
-    onSwipeLeft={() => console.log('Hayır seçildi')}
-    onSwipeRight={() => console.log('Evet seçildi')}
+    leftOption="No"
+    rightOption="Yes"
+    onSwipeLeft={() => console.log('No selected')}
+    onSwipeRight={() => console.log('Yes selected')}
     containerBackgroundColor="#E8D5F2"
     activeBackgroundColorLeft="#E91E63"
     activeBackgroundColorRight="#9C27B0"
@@ -134,14 +165,14 @@ function MyComponent() {
 />
 ```
 
-### 3. Büyük Boyutlu Slider
+### 3. Large Slider
 
 ```tsx
 <SwipeSlider
-    leftOption="◀ Sol"
-    rightOption="Sağ ▶"
-    onSwipeLeft={() => console.log('Sol seçildi')}
-    onSwipeRight={() => console.log('Sağ seçildi')}
+    leftOption="◀ Left"
+    rightOption="Right ▶"
+    onSwipeLeft={() => console.log('Left selected')}
+    onSwipeRight={() => console.log('Right selected')}
     containerHeight={80}
     thumbSize={70}
     thumbBorderRadius={35}
@@ -152,56 +183,56 @@ function MyComponent() {
 />
 ```
 
-### 4. Kolay Kaydırma (Düşük Threshold)
+### 4. Easy Swipe (Low Threshold)
 
 ```tsx
 <SwipeSlider
-    leftOption="İptal"
-    rightOption="Devam"
-    onSwipeLeft={() => console.log('İptal edildi')}
-    onSwipeRight={() => console.log('Devam ediliyor')}
-    swipeThreshold={0.3}  // %30 kaydırma yeterli
+    leftOption="Cancel"
+    rightOption="Continue"
+    onSwipeLeft={() => console.log('Cancelled')}
+    onSwipeRight={() => console.log('Continuing')}
+    swipeThreshold={0.3}  // 30% swipe is enough
     activeBackgroundColorLeft="#E53935"
     activeBackgroundColorRight="#43A047"
 />
 ```
 
-### 5. Zor Kaydırma (Yüksek Threshold)
+### 5. Hard Swipe (High Threshold)
 
 ```tsx
 <SwipeSlider
-    leftOption="Sil"
-    rightOption="Onayla"
-    onSwipeLeft={() => console.log('Silindi')}
-    onSwipeRight={() => console.log('Onaylandı')}
-    swipeThreshold={0.7}  // %70 kaydırma gerekli (kritik işlemler için)
+    leftOption="Delete"
+    rightOption="Confirm"
+    onSwipeLeft={() => console.log('Deleted')}
+    onSwipeRight={() => console.log('Confirmed')}
+    swipeThreshold={0.7}  // 70% swipe required (for critical actions)
     activeBackgroundColorLeft="#D32F2F"
     activeBackgroundColorRight="#388E3C"
 />
 ```
 
-### 6. Hızlı Animasyon
+### 6. Fast Animation
 
 ```tsx
 <SwipeSlider
-    leftOption="⚡ Hızlı"
-    rightOption="Hızlı ⚡"
-    onSwipeLeft={() => console.log('Sol')}
-    onSwipeRight={() => console.log('Sağ')}
-    animationDuration={150}  // 150ms (varsayılan 300ms)
+    leftOption="⚡ Fast"
+    rightOption="Fast ⚡"
+    onSwipeLeft={() => console.log('Left')}
+    onSwipeRight={() => console.log('Right')}
+    animationDuration={150}  // 150ms (default 300ms)
     activeBackgroundColorLeft="#FF9800"
     activeBackgroundColorRight="#FFEB3B"
 />
 ```
 
-### 7. Border ile Tasarım
+### 7. Border Design
 
 ```tsx
 <SwipeSlider
     leftOption="👎"
     rightOption="👍"
-    onSwipeLeft={() => console.log('Beğenilmedi')}
-    onSwipeRight={() => console.log('Beğenildi')}
+    onSwipeLeft={() => console.log('Disliked')}
+    onSwipeRight={() => console.log('Liked')}
     containerBackgroundColor="#FFFFFF"
     containerBorderWidth={3}
     containerBorderColor="#FFB300"
@@ -212,14 +243,14 @@ function MyComponent() {
 />
 ```
 
-### 8. Kompakt Slider
+### 8. Compact Slider
 
 ```tsx
 <SwipeSlider
     leftOption="❌"
     rightOption="✓"
-    onSwipeLeft={() => console.log('Hayır')}
-    onSwipeRight={() => console.log('Evet')}
+    onSwipeLeft={() => console.log('No')}
+    onSwipeRight={() => console.log('Yes')}
     containerHeight={45}
     containerWidth={200}
     thumbSize={35}
@@ -231,40 +262,40 @@ function MyComponent() {
 />
 ```
 
-### 9. Idle Animasyon Kapalı
+### 9. Idle Animation Disabled
 
 ```tsx
 <SwipeSlider
-    leftOption="Statik"
+    leftOption="Static"
     rightOption="Slider"
-    onSwipeLeft={() => console.log('Sol')}
-    onSwipeRight={() => console.log('Sağ')}
-    enableIdleAnimation={false}  // Animasyon kapalı
+    onSwipeLeft={() => console.log('Left')}
+    onSwipeRight={() => console.log('Right')}
+    enableIdleAnimation={false}  // Animation off
 />
 ```
 
-### 10. Özel Idle Animasyon
+### 10. Custom Idle Animation
 
 ```tsx
 <SwipeSlider
-    leftOption="← Kaydır"
-    rightOption="Kaydır →"
-    onSwipeLeft={() => console.log('Sol')}
-    onSwipeRight={() => console.log('Sağ')}
+    leftOption="← Swipe"
+    rightOption="Swipe →"
+    onSwipeLeft={() => console.log('Left')}
+    onSwipeRight={() => console.log('Right')}
     enableIdleAnimation={true}
-    idleAnimationDuration={800}    // Daha hızlı animasyon
-    idleChevronColor="#5C6BC0"     // Mavi chevronlar
+    idleAnimationDuration={800}    // Faster animation
+    idleChevronColor="#5C6BC0"     // Blue chevrons
 />
 ```
 
-## Gerçek Hayat Senaryoları
+## Real-World Scenarios
 
-### E-ticaret: Sepete Ekle / Favoriye Ekle
+### E-commerce: Add to Cart / Favorites
 
 ```tsx
 <SwipeSlider
-    leftOption="❤️ Favori"
-    rightOption="🛒 Sepet"
+    leftOption="❤️ Favorite"
+    rightOption="🛒 Cart"
     onSwipeLeft={() => addToFavorites(product)}
     onSwipeRight={() => addToCart(product)}
     activeBackgroundColorLeft="#FF6B6B"
@@ -272,7 +303,7 @@ function MyComponent() {
 />
 ```
 
-### Sosyal Medya: Beğen / Beğenme
+### Social Media: Like / Dislike
 
 ```tsx
 <SwipeSlider
@@ -286,12 +317,12 @@ function MyComponent() {
 />
 ```
 
-### Görev Yönetimi: Tamamla / Sil
+### Task Management: Complete / Delete
 
 ```tsx
 <SwipeSlider
-    leftOption="🗑️ Sil"
-    rightOption="✓ Tamamla"
+    leftOption="🗑️ Delete"
+    rightOption="✓ Complete"
     onSwipeLeft={() => deleteTask(task.id)}
     onSwipeRight={() => completeTask(task.id)}
     swipeThreshold={0.5}
@@ -300,12 +331,12 @@ function MyComponent() {
 />
 ```
 
-### Oylama Sistemi
+### Voting System
 
 ```tsx
 <SwipeSlider
-    leftOption="Katılmıyorum"
-    rightOption="Katılıyorum"
+    leftOption="Disagree"
+    rightOption="Agree"
     onSwipeLeft={() => submitVote(pollId, 'disagree')}
     onSwipeRight={() => submitVote(pollId, 'agree')}
     containerBackgroundColor="#E3F2FD"
@@ -314,56 +345,101 @@ function MyComponent() {
 />
 ```
 
-## İpuçları
+## Tips
 
-1. **Threshold Ayarı**: Kritik işlemler için (silme gibi) yüksek threshold (0.6-0.7) kullanın
-2. **Renk Seçimi**: 
-   - Sol ve sağ için farklı renkler kullanarak kullanıcıya görsel geri bildirim verin
-   - Olumsuz işlemler için kırmızı/turuncu tonları (#FF4444, #E53935)
-   - Olumlu işlemler için yeşil/mavi tonları (#4CAF50, #2196F3)
-   - Aktif arka plan renkleri ile container rengi arasında kontrast olsun
-3. **Boyut Oranı**: Thumb boyutu container yüksekliğinin ~%80-85'i kadar olmalı
-4. **Border Radius**: Container border radius'u container yüksekliğinin yarısı kadar olmalı
-5. **Animasyon**: Hızlı etkileşimler için 150-200ms, normal için 300ms kullanın
-6. **Idle Animasyon**: 
-   - Varsayılan olarak açık (enableIdleAnimation={true})
-   - Arka planda 3 chevron ok merkezden dışa doğru **senkronize dalga** efekti yapar
-   - Tek bir döngü içinde mükemmel senkronizasyon - her tekrarda aynı pattern
-   - Her chevron maksimum opacity'e ulaştığında bir sonraki fade-in başlar (paralel geçiş)
-   - Chevronlar overlap ederek kesintisiz smooth bir dalga etkisi oluşturur
-   - **Chevronlar sadece buton merkezdeyken görünür** (buton kaydırıldığında otomatik gizlenir)
-   - Buton kaydırıldıkça chevronlar fade-out, seçenek metinleri fade-in olur
-   - Kullanıcıya butonun hareket ettirilebilir olduğunu görsel olarak gösterir
-   - İlk kullanımda kullanıcı deneyimini artırır
-   - Liste veya çok sayıda slider varsa kapatmayı düşünün (performans için)
+1. **Threshold Setting**: Use high threshold (0.6-0.7) for critical actions (like delete)
+2. **Color Selection**: 
+   - Use different colors for left and right to give visual feedback
+   - Use red/orange tones for negative actions (#FF4444, #E53935)
+   - Use green/blue tones for positive actions (#4CAF50, #2196F3)
+   - Ensure contrast between active background colors and container color
+3. **Size Ratio**: Thumb size should be ~80-85% of container height
+4. **Border Radius**: Container border radius should be about half of container height
+5. **Animation**: Use 150-200ms for fast interactions, 300ms for normal
+6. **Idle Animation**: 
+   - Enabled by default (enableIdleAnimation={true})
+   - 3 chevron arrows create a **synchronized wave** effect from center to edges
+   - Perfect synchronization in a single loop - same pattern every repeat
+   - When each chevron reaches maximum opacity, the next one starts fading in (parallel transition)
+   - Chevrons overlap to create a seamless smooth wave effect
+   - **Chevrons only visible when button is centered** (automatically hidden when button is swiped)
+   - As button is swiped, chevrons fade out and option text fades in
+   - Visually indicates to user that button is swipeable
+   - Improves first-time user experience
+   - Consider disabling for lists with many sliders (for performance)
 
-## Demo Sayfası
+## Demo Page
 
-Tüm örnekleri görmek için `SwipeSliderExample.tsx` dosyasına bakın:
+To see all examples, check the `SwipeSliderExample.tsx` file:
 
 ```tsx
 import SwipeSliderExample from '@/app/components/SwipeSliderExample';
 
-// Route veya navigation ile kullanın
+// Use with route or navigation
 ```
 
-## TypeScript Desteği
+## TypeScript Support
 
-Komponent tam TypeScript desteği ile gelir. Tüm proplar tip güvenlidir.
+The component comes with full TypeScript support. All props are type-safe.
 
 ```tsx
 import SwipeSlider, { SwipeSliderProps } from '@/app/components/SwipeSlider';
 
 const props: SwipeSliderProps = {
-    leftOption: 'Sol',
-    rightOption: 'Sağ',
-    onSwipeLeft: () => console.log('Sol seçildi'),
-    onSwipeRight: () => console.log('Sağ seçildi'),
+    leftOption: 'Left',
+    rightOption: 'Right',
+    onSwipeLeft: () => console.log('Left selected'),
+    onSwipeRight: () => console.log('Right selected'),
 };
 ```
 
-## Lisans
+## Troubleshooting
 
-Bu komponent UniMeetPoint projesi için geliştirilmiştir.
+### Error: "Unable to resolve module @expo/vector-icons"
 
-    
+If you encounter this error, it means you're missing the icon dependency:
+
+**For Expo projects:**
+```bash
+npm install @expo/vector-icons
+# or
+yarn add @expo/vector-icons
+```
+
+**For React Native CLI projects:**
+```bash
+npm install react-native-vector-icons
+npx react-native link react-native-vector-icons
+
+# For iOS (if using CocoaPods)
+cd ios && pod install && cd ..
+```
+
+Then update the import in `SwipeSlider.tsx`:
+```tsx
+// Change from:
+import { Entypo } from '@expo/vector-icons';
+
+// To:
+import Entypo from 'react-native-vector-icons/Entypo';
+```
+
+### Disabling Idle Animation (If Icon Issues Persist)
+
+If you continue to have issues with icons and want to use the component without the idle animation:
+
+```tsx
+<SwipeSlider
+    leftOption="No"
+    rightOption="Yes"
+    enableIdleAnimation={false}  // Disables chevron animation
+    onSwipeLeft={handleLeft}
+    onSwipeRight={handleRight}
+/>
+```
+
+This will disable the chevron animation and the component will work without the icon dependency (though you'll lose the visual hint feature).
+
+## License
+
+This component was developed for the UniMeetPoint project.
