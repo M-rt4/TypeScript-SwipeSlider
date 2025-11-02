@@ -1,4 +1,5 @@
 import { Entypo } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     Animated,
@@ -13,6 +14,9 @@ import {
 } from 'react-native';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+// Animated LinearGradient oluştur
+const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
 export interface SwipeSliderProps {
     // Sol ve sağ seçenek metinleri
@@ -34,6 +38,7 @@ export interface SwipeSliderProps {
     containerBorderRadius?: number;
     containerBorderWidth?: number;
     containerBorderColor?: string;
+    containerPadding?: number;
     
     // Buton (thumb) style
     thumbSize?: number;
@@ -49,6 +54,7 @@ export interface SwipeSliderProps {
     rightOptionTextStyle?: StyleProp<TextStyle>;
     optionFontSize?: number;
     optionColor?: string;
+    inactiveOptionOpacity?: number;
     
     // Kaydırma hassasiyeti (0-1 arası, 0.5 = %50 kaydırma gerekir)
     swipeThreshold?: number;
@@ -59,11 +65,14 @@ export interface SwipeSliderProps {
     // Kaydırılan tarafın arka plan renkleri
     activeBackgroundColorLeft?: string;
     activeBackgroundColorRight?: string;
+    centerBackgroundColor?: string;
+    enableGradient?: boolean;
     
     // Idle (boşta) animasyon ayarları
     enableIdleAnimation?: boolean;
     idleAnimationDuration?: number;
-    idleChevronColor?: string;
+    idleChevronColorLeft?: string;
+    idleChevronColorRight?: string;
 }
 
 const SwipeSlider: React.FC<SwipeSliderProps> = ({
@@ -79,6 +88,7 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
     containerBorderRadius = 30,
     containerBorderWidth = 0,
     containerBorderColor = 'transparent',
+    containerPadding = 5,
     thumbSize = 50,
     thumbBackgroundColor = '#FFFFFF',
     thumbBorderRadius = 25,
@@ -90,14 +100,24 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
     rightOptionTextStyle,
     optionFontSize = 16,
     optionColor = '#333333',
+    inactiveOptionOpacity = 0.3,
     swipeThreshold = 0.4,
     animationDuration = 300,
     activeBackgroundColorLeft = '#FF4444',
     activeBackgroundColorRight = '#4CAF50',
+    centerBackgroundColor,
+    enableGradient = true,
     enableIdleAnimation = true,
     idleAnimationDuration = 1200,
-    idleChevronColor = '#999999',
+    idleChevronColorLeft,
+    idleChevronColorRight,
 }) => {
+    // Merkez rengi - varsayılan olarak container background'u kullan
+    const gradientCenterColor = centerBackgroundColor || containerBackgroundColor;
+    
+    // Chevron renkleri - varsayılan olarak active background renklerini kullan
+    const leftChevronColor = idleChevronColorLeft || activeBackgroundColorLeft;
+    const rightChevronColor = idleChevronColorRight || activeBackgroundColorRight;
     const pan = useRef(new Animated.Value(0)).current;
     const [isAnimating, setIsAnimating] = useState(false);
     const [isTouching, setIsTouching] = useState(false);
@@ -109,8 +129,14 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
     const chevronContainerOpacity = useRef(new Animated.Value(1)).current;
     const optionsOpacity = useRef(new Animated.Value(0)).current;
     
-    // Kaydırılabilir maksimum mesafe
-    const maxSlide = (containerWidth - thumbSize - 10) / 2;
+    // Thumb'ın hareket hesaplamaları
+    // Thumb merkez pozisyonu (container'ın sol kenarından thumb'ın sol kenarına olan mesafe)
+    const thumbCenterPosition = (containerWidth - thumbSize) / 2;
+    
+    // Kaydırılabilir maksimum mesafe (merkezden her iki kenara)
+    // Sol en uç: thumbCenterPosition - maxSlide = containerPadding
+    // Sağ en uç: thumbCenterPosition + maxSlide = containerWidth - thumbSize - containerPadding
+    const maxSlide = thumbCenterPosition - containerPadding;
 
     const panResponder = useRef(
         PanResponder.create({
@@ -297,6 +323,20 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
         extrapolate: 'clamp',
     });
 
+    // Sol seçenek opacity - sağa kaydırıldığında düşer
+    const leftOptionOpacityValue = pan.interpolate({
+        inputRange: [0, maxSlide],
+        outputRange: [1, inactiveOptionOpacity],
+        extrapolate: 'clamp',
+    });
+
+    // Sağ seçenek opacity - sola kaydırıldığında düşer
+    const rightOptionOpacityValue = pan.interpolate({
+        inputRange: [-maxSlide, 0],
+        outputRange: [inactiveOptionOpacity, 1],
+        extrapolate: 'clamp',
+    });
+
     return (
         <View
             style={[
@@ -308,33 +348,64 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
                     borderRadius: containerBorderRadius,
                     borderWidth: containerBorderWidth,
                     borderColor: containerBorderColor,
+                    paddingHorizontal: containerPadding,
                 },
                 containerStyle,
             ]}
         >
             {/* Sol taraf aktif arka plan */}
-            <Animated.View
-                style={[
-                    styles.activeBackground,
-                    {
-                        opacity: leftBackgroundOpacity,
-                        backgroundColor: activeBackgroundColorLeft,
-                        borderRadius: containerBorderRadius,
-                    },
-                ]}
-            />
+            {enableGradient ? (
+                <AnimatedLinearGradient
+                    colors={[activeBackgroundColorLeft, gradientCenterColor]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={[
+                        styles.activeBackground,
+                        {
+                            opacity: leftBackgroundOpacity,
+                            borderRadius: containerBorderRadius,
+                        },
+                    ]}
+                />
+            ) : (
+                <Animated.View
+                    style={[
+                        styles.activeBackground,
+                        {
+                            opacity: leftBackgroundOpacity,
+                            backgroundColor: activeBackgroundColorLeft,
+                            borderRadius: containerBorderRadius,
+                        },
+                    ]}
+                />
+            )}
             
             {/* Sağ taraf aktif arka plan */}
-            <Animated.View
-                style={[
-                    styles.activeBackground,
-                    {
-                        opacity: rightBackgroundOpacity,
-                        backgroundColor: activeBackgroundColorRight,
-                        borderRadius: containerBorderRadius,
-                    },
-                ]}
-            />
+            {enableGradient ? (
+                <AnimatedLinearGradient
+                    colors={[gradientCenterColor, activeBackgroundColorRight]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={[
+                        styles.activeBackground,
+                        {
+                            opacity: rightBackgroundOpacity,
+                            borderRadius: containerBorderRadius,
+                        },
+                    ]}
+                />
+            ) : (
+                <Animated.View
+                    style={[
+                        styles.activeBackground,
+                        {
+                            opacity: rightBackgroundOpacity,
+                            backgroundColor: activeBackgroundColorRight,
+                            borderRadius: containerBorderRadius,
+                        },
+                    ]}
+                />
+            )}
 
             {/* Chevron Animasyonları - Sol Taraf */}
             {enableIdleAnimation && (
@@ -349,13 +420,13 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
                     pointerEvents="none"
                 >
                     <Animated.View style={{ opacity: chevronOpacity3 }}>
-                        <Entypo name="chevron-left" size={24} color={idleChevronColor} />
+                        <Entypo name="chevron-left" size={24} color={leftChevronColor} />
                     </Animated.View>
                     <Animated.View style={{ opacity: chevronOpacity2, marginLeft: -8 }}>
-                        <Entypo name="chevron-left" size={24} color={idleChevronColor} />
+                        <Entypo name="chevron-left" size={24} color={leftChevronColor} />
                     </Animated.View>
                     <Animated.View style={{ opacity: chevronOpacity1, marginLeft: -8 }}>
-                        <Entypo name="chevron-left" size={24} color={idleChevronColor} />
+                        <Entypo name="chevron-left" size={24} color={leftChevronColor} />
                     </Animated.View>
                 </Animated.View>
             )}
@@ -373,13 +444,13 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
                     pointerEvents="none"
                 >
                     <Animated.View style={{ opacity: chevronOpacity1 }}>
-                        <Entypo name="chevron-right" size={24} color={idleChevronColor} />
+                        <Entypo name="chevron-right" size={24} color={rightChevronColor} />
                     </Animated.View>
                     <Animated.View style={{ opacity: chevronOpacity2, marginLeft: -8 }}>
-                        <Entypo name="chevron-right" size={24} color={idleChevronColor} />
+                        <Entypo name="chevron-right" size={24} color={rightChevronColor} />
                     </Animated.View>
                     <Animated.View style={{ opacity: chevronOpacity3, marginLeft: -8 }}>
-                        <Entypo name="chevron-right" size={24} color={idleChevronColor} />
+                        <Entypo name="chevron-right" size={24} color={rightChevronColor} />
                     </Animated.View>
                 </Animated.View>
             )}
@@ -389,11 +460,14 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
                 styles.optionContainer, 
                 { 
                     opacity: enableIdleAnimation 
-                        ? Animated.add(
-                            optionsOpacity, 
-                            Animated.subtract(1, chevronVisibility)
-                          ) 
-                        : 1 
+                        ? Animated.multiply(
+                            Animated.add(
+                                optionsOpacity, 
+                                Animated.subtract(1, chevronVisibility)
+                            ),
+                            leftOptionOpacityValue
+                          )
+                        : leftOptionOpacityValue
                 }
             ]}>
                 <Text
@@ -416,11 +490,14 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
                 styles.optionContainer, 
                 { 
                     opacity: enableIdleAnimation 
-                        ? Animated.add(
-                            optionsOpacity, 
-                            Animated.subtract(1, chevronVisibility)
-                          ) 
-                        : 1 
+                        ? Animated.multiply(
+                            Animated.add(
+                                optionsOpacity, 
+                                Animated.subtract(1, chevronVisibility)
+                            ),
+                            rightOptionOpacityValue
+                          )
+                        : rightOptionOpacityValue
                 }
             ]}>
                 <Text
@@ -449,7 +526,7 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
                         borderRadius: thumbBorderRadius,
                         borderWidth: thumbBorderWidth,
                         borderColor: thumbBorderColor,
-                        left: (containerWidth - thumbSize) / 2,
+                        left: thumbCenterPosition,
                         transform: [{ translateX: pan }],
                     },
                     thumbStyle,
@@ -471,7 +548,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 5,
         position: 'relative',
         overflow: 'hidden',
     },
