@@ -3,45 +3,29 @@ import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import SwipeSlider from './SwipeSlider';
 
 /**
- * SwipeSlider Usage Examples
+ * SwipeSlider Feature Showcase
  * 
- * This file demonstrates 11 different use cases showcasing all features of the SwipeSlider component.
- * Each example highlights different prop combinations and design styles.
- * 
- * Features demonstrated:
- * - Gradient backgrounds (default) and solid backgrounds (enableGradient={false})
- * - Dynamic option opacity
- * - Custom chevron colors
- * - Various sizes and themes
- * - Different animation speeds
- * - Threshold variations
+ * Each example demonstrates ONE primary feature clearly.
+ * This helps new users understand what each prop does individually.
  */
 const SwipeSliderExample = () => {
     const [lastSwipe, setLastSwipe] = useState<string>('');
 
     const handleSwipeLeft = () => {
         setLastSwipe('Left');
-        Alert.alert(
-            'Swipe Detected!',
-            'You swiped left!',
-            [{ text: 'OK' }]
-        );
+        Alert.alert('Swipe Detected!', 'You swiped LEFT!', [{ text: 'OK' }]);
     };
 
     const handleSwipeRight = () => {
         setLastSwipe('Right');
-        Alert.alert(
-            'Swipe Detected!',
-            'You swiped right!',
-            [{ text: 'OK' }]
-        );
+        Alert.alert('Swipe Detected!', 'You swiped RIGHT!', [{ text: 'OK' }]);
     };
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-            <Text style={styles.title}>SwipeSlider Examples</Text>
+            <Text style={styles.title}>SwipeSlider Feature Showcase</Text>
             <Text style={styles.subtitle}>
-                11 Different Styles Showcasing All Features
+                Each example demonstrates ONE feature clearly
             </Text>
             
             {lastSwipe !== '' && (
@@ -52,366 +36,411 @@ const SwipeSliderExample = () => {
                 </View>
             )}
 
-            {/* Örnek 1: E-Commerce - Favorilere Ekle / Sepete Ekle */}
+            {/* Example 1: Default - No Customization */}
             <View style={styles.exampleContainer}>
-                <Text style={styles.exampleTitle}>1. 🛒 E-Commerce Slider</Text>
+                <Text style={styles.exampleTitle}>1. 📦 Default Slider</Text>
                 <Text style={styles.exampleDescription}>
-                    Favorite/Cart - Complete feature set showcase
+                    All default values - no customization
                 </Text>
                 <SwipeSlider
-                    leftOption="❤️ Favori"
-                    rightOption="🛒 Sepet"
+                    leftOption="Cancel"
+                    rightOption="Confirm"
                     onSwipeLeft={handleSwipeLeft}
                     onSwipeRight={handleSwipeRight}
-                    containerWidth={320}
-                    containerHeight={70}
-                    containerBackgroundColor="#FFF5F5"
-                    containerBorderRadius={35}
-                    containerBorderWidth={2}
-                    containerBorderColor="#FFE0E0"
-                    containerPadding={6}
-                    thumbSize={40}
-                    thumbBackgroundColor="#FFFFFF"
-                    thumbBorderRadius={30}
-                    thumbBorderWidth={3}
-                    thumbBorderColor="#FF6B6B"
-                    activeBackgroundColorLeft="#FF6B6B"
-                    activeBackgroundColorRight="#4CAF50"
-                    optionFontSize={18}
-                    optionColor="#333333"
-                    swipeThreshold={0.4}
-                    animationDuration={250}
-                    enableIdleAnimation={true}
-                    idleAnimationDuration={1000}
-                    inactiveOptionOpacity={0.25}
                 />
             </View>
 
-            {/* Örnek 2: Social Media - Like/Dislike */}
+            {/* Example 2: Container Size */}
             <View style={styles.exampleContainer}>
-                <Text style={styles.exampleTitle}>2. 📱 Social Media Reactions</Text>
+                <Text style={styles.exampleTitle}>2. 📏 Custom Container Size</Text>
                 <Text style={styles.exampleDescription}>
-                    Quick reactions with emoji options
+                    Large container (380x90) for better touch accessibility
                 </Text>
                 <SwipeSlider
-                    leftOption="👎"
-                    rightOption="👍"
+                    leftOption="Back"
+                    rightOption="Next"
                     onSwipeLeft={handleSwipeLeft}
                     onSwipeRight={handleSwipeRight}
-                    containerWidth={280}
-                    containerHeight={65}
-                    containerBackgroundColor="#F8F9FA"
-                    containerBorderRadius={32.5}
-                    containerPadding={6}
-                    thumbSize={55}
-                    thumbBackgroundColor="#FFFFFF"
-                    thumbBorderRadius={27.5}
-                    thumbBorderWidth={2}
-                    thumbBorderColor="#E0E0E0"
-                    activeBackgroundColorLeft="#EF5350"
-                    activeBackgroundColorRight="#66BB6A"
-                    optionFontSize={32}
-                    swipeThreshold={0.35}
-                    animationDuration={200}
-                    idleAnimationDuration={1200}
+                    containerWidth={380}
+                    containerHeight={90}
                 />
             </View>
 
-            {/* Örnek 3: Critical Action - Delete with High Security */}
+            {/* Example 3: Thumb Size */}
             <View style={styles.exampleContainer}>
-                <Text style={styles.exampleTitle}>3. ⚠️ Critical Action Slider</Text>
+                <Text style={styles.exampleTitle}>3. 🔘 Custom Thumb Size</Text>
                 <Text style={styles.exampleDescription}>
-                    High threshold (70%) for destructive actions
-                </Text>
-                <SwipeSlider
-                    leftOption="🗑️ SİL"
-                    rightOption="✓ KORU"
-                    onSwipeLeft={handleSwipeLeft}
-                    onSwipeRight={handleSwipeRight}
-                    containerWidth={300}
-                    containerHeight={75}
-                    containerBackgroundColor="#FFEBEE"
-                    containerBorderRadius={37.5}
-                    containerBorderWidth={3}
-                    containerBorderColor="#FFCDD2"
-                    containerPadding={7}
-                    thumbSize={65}
-                    thumbBackgroundColor="#FFFFFF"
-                    thumbBorderRadius={32.5}
-                    thumbBorderWidth={3}
-                    thumbBorderColor="#D32F2F"
-                    activeBackgroundColorLeft="#D32F2F"
-                    activeBackgroundColorRight="#388E3C"
-                    optionFontSize={16}
-                    optionColor="#B71C1C"
-                    swipeThreshold={0.7}
-                    animationDuration={350}
-                    idleAnimationDuration={1500}
-                    inactiveOptionOpacity={0.15}
-                />
-            </View>
-
-            {/* Örnek 4: Modern Minimalist Design */}
-            <View style={styles.exampleContainer}>
-                <Text style={styles.exampleTitle}>4. 🎨 Modern Minimalist</Text>
-                <Text style={styles.exampleDescription}>
-                    Clean design with subtle colors
+                    Large thumb button (80px) for easier grip
                 </Text>
                 <SwipeSlider
                     leftOption="Decline"
                     rightOption="Accept"
                     onSwipeLeft={handleSwipeLeft}
                     onSwipeRight={handleSwipeRight}
-                    containerWidth={340}
-                    containerHeight={60}
-                    containerBackgroundColor="#FAFAFA"
-                    containerBorderRadius={30}
-                    containerPadding={5}
-                    thumbSize={50}
-                    thumbBackgroundColor="#FFFFFF"
-                    thumbBorderRadius={25}
-                    thumbBorderWidth={1}
-                    thumbBorderColor="#E0E0E0"
-                    activeBackgroundColorLeft="#757575"
-                    activeBackgroundColorRight="#000000"
-                    optionFontSize={15}
-                    optionColor="#424242"
-                    swipeThreshold={0.4}
-                    animationDuration={300}
-                    idleAnimationDuration={1100}
-                    inactiveOptionOpacity={0.4}
-                />
-            </View>
-
-            {/* Örnek 4B: Solid Background (No Gradient) */}
-            <View style={styles.exampleContainer}>
-                <Text style={styles.exampleTitle}>4B. 🎯 Solid Background Style</Text>
-                <Text style={styles.exampleDescription}>
-                    No gradient - classic solid color fill
-                </Text>
-                <SwipeSlider
-                    leftOption="❌ Decline"
-                    rightOption="✓ Accept"
-                    onSwipeLeft={handleSwipeLeft}
-                    onSwipeRight={handleSwipeRight}
-                    containerWidth={310}
-                    containerHeight={65}
-                    containerBackgroundColor="#F5F5F5"
-                    containerBorderRadius={32.5}
-                    containerPadding={5}
-                    thumbSize={55}
-                    thumbBackgroundColor="#FFFFFF"
-                    thumbBorderRadius={27.5}
-                    thumbBorderWidth={2}
-                    thumbBorderColor="#BDBDBD"
-                    activeBackgroundColorLeft="#FF5722"
-                    activeBackgroundColorRight="#4CAF50"
-                    enableGradient={false}
-                    optionFontSize={16}
-                    optionColor="#424242"
-                    swipeThreshold={0.4}
-                    animationDuration={250}
-                    idleAnimationDuration={1000}
-                    inactiveOptionOpacity={0.2}
-                />
-            </View>
-
-            {/* Örnek 5: Dark Theme Premium */}
-            <View style={styles.exampleContainer}>
-                <Text style={styles.exampleTitle}>5. 🌙 Dark Theme Premium</Text>
-                <Text style={styles.exampleDescription}>
-                    Elegant dark mode with gold accents
-                </Text>
-                <SwipeSlider
-                    leftOption="← Skip"
-                    rightOption="Next →"
-                    onSwipeLeft={handleSwipeLeft}
-                    onSwipeRight={handleSwipeRight}
-                    containerWidth={300}
-                    containerHeight={70}
-                    containerBackgroundColor="#1E1E1E"
-                    containerBorderRadius={35}
-                    containerBorderWidth={2}
-                    containerBorderColor="#FFD700"
-                    containerPadding={6}
-                    thumbSize={60}
-                    thumbBackgroundColor="#2C2C2C"
-                    thumbBorderRadius={30}
-                    thumbBorderWidth={2}
-                    thumbBorderColor="#FFD700"
-                    activeBackgroundColorLeft="#D32F2F"
-                    activeBackgroundColorRight="#FFD700"
-                    optionFontSize={16}
-                    optionColor="#FFD700"
-                    swipeThreshold={0.45}
-                    animationDuration={280}
-                    idleAnimationDuration={900}
-                />
-            </View>
-
-            {/* Örnek 6: Gradient-Style with Vibrant Colors */}
-            <View style={styles.exampleContainer}>
-                <Text style={styles.exampleTitle}>6. 🌈 Vibrant Gradient Style</Text>
-                <Text style={styles.exampleDescription}>
-                    Colorful design with thick borders
-                </Text>
-                <SwipeSlider
-                    leftOption="NOPE"
-                    rightOption="YASS"
-                    onSwipeLeft={handleSwipeLeft}
-                    onSwipeRight={handleSwipeRight}
-                    containerWidth={290}
-                    containerHeight={68}
-                    containerBackgroundColor="#FFFFFF"
-                    containerBorderRadius={34}
-                    containerBorderWidth={4}
-                    containerBorderColor="#FF6B6B"
-                    containerPadding={6}
-                    thumbSize={58}
-                    thumbBackgroundColor="#FFE66D"
-                    thumbBorderRadius={29}
-                    thumbBorderWidth={4}
-                    thumbBorderColor="#FF6B6B"
-                    activeBackgroundColorLeft="#FF6B6B"
-                    activeBackgroundColorRight="#4ECDC4"
-                    optionFontSize={18}
-                    optionColor="#2C3E50"
-                    swipeThreshold={0.38}
-                    animationDuration={220}
-                    idleAnimationDuration={1000}
-                />
-            </View>
-
-            {/* Örnek 7: Compact Mobile-Optimized */}
-            <View style={styles.exampleContainer}>
-                <Text style={styles.exampleTitle}>7. 📱 Compact Mobile Slider</Text>
-                <Text style={styles.exampleDescription}>
-                    Small size, perfect for mobile lists
-                </Text>
-                <SwipeSlider
-                    leftOption="✗"
-                    rightOption="✓"
-                    onSwipeLeft={handleSwipeLeft}
-                    onSwipeRight={handleSwipeRight}
-                    containerWidth={180}
-                    containerHeight={45}
-                    containerBackgroundColor="#F0F0F0"
-                    containerBorderRadius={22.5}
-                    containerPadding={3}
-                    thumbSize={38}
-                    thumbBackgroundColor="#FFFFFF"
-                    thumbBorderRadius={19}
-                    thumbBorderWidth={2}
-                    thumbBorderColor="#CCCCCC"
-                    activeBackgroundColorLeft="#FF5252"
-                    activeBackgroundColorRight="#69F0AE"
-                    optionFontSize={20}
-                    optionColor="#333333"
-                    swipeThreshold={0.35}
-                    animationDuration={200}
-                    idleAnimationDuration={800}
-                />
-            </View>
-
-            {/* Örnek 8: Large Touch-Friendly Slider */}
-            <View style={styles.exampleContainer}>
-                <Text style={styles.exampleTitle}>8. 👆 Large Touch-Friendly</Text>
-                <Text style={styles.exampleDescription}>
-                    Extra large for accessibility & ease of use
-                </Text>
-                <SwipeSlider
-                    leftOption="◀ BACK"
-                    rightOption="NEXT ▶"
-                    onSwipeLeft={handleSwipeLeft}
-                    onSwipeRight={handleSwipeRight}
-                    containerWidth={350}
-                    containerHeight={90}
-                    containerBackgroundColor="#E3F2FD"
-                    containerBorderRadius={45}
-                    containerBorderWidth={3}
-                    containerBorderColor="#90CAF9"
-                    containerPadding={8}
                     thumbSize={80}
-                    thumbBackgroundColor="#FFFFFF"
-                    thumbBorderRadius={40}
-                    thumbBorderWidth={4}
-                    thumbBorderColor="#1976D2"
-                    activeBackgroundColorLeft="#FF5722"
-                    activeBackgroundColorRight="#2196F3"
-                    optionFontSize={20}
-                    optionColor="#0D47A1"
-                    swipeThreshold={0.4}
-                    animationDuration={300}
-                    idleAnimationDuration={1300}
                 />
             </View>
 
-            {/* Örnek 9: Fast Animation Slider */}
+            {/* Example 4: Container Colors & Borders */}
             <View style={styles.exampleContainer}>
-                <Text style={styles.exampleTitle}>9. ⚡ Lightning Fast Animation</Text>
+                <Text style={styles.exampleTitle}>4. 🎨 Container Styling</Text>
                 <Text style={styles.exampleDescription}>
-                    Ultra-fast 100ms animation with low threshold
+                    Custom background, border color and border radius
                 </Text>
                 <SwipeSlider
-                    leftOption="⚡ Quick"
-                    rightOption="Fast ⚡"
+                    leftOption="No"
+                    rightOption="Yes"
                     onSwipeLeft={handleSwipeLeft}
                     onSwipeRight={handleSwipeRight}
-                    containerWidth={270}
-                    containerHeight={62}
-                    containerBackgroundColor="#FFF9C4"
-                    containerBorderRadius={31}
-                    containerPadding={5}
-                    thumbSize={52}
-                    thumbBackgroundColor="#FFFFFF"
-                    thumbBorderRadius={26}
-                    thumbBorderWidth={2}
-                    thumbBorderColor="#FBC02D"
-                    activeBackgroundColorLeft="#FF9800"
-                    activeBackgroundColorRight="#FFEB3B"
-                    optionFontSize={16}
-                    optionColor="#F57F17"
-                    swipeThreshold={0.3}
-                    animationDuration={100}
+                    containerBackgroundColor="#FFF3E0"
+                    containerBorderColor="#FF9800"
+                    containerBorderWidth={0}
+                    containerBorderRadius={10}
+                />
+            </View>
+
+            {/* Example 5: Thumb Styling */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>5. 💎 Thumb Styling</Text>
+                <Text style={styles.exampleDescription}>
+                    Custom thumb colors, borders and border radius
+                </Text>
+                <SwipeSlider
+                    leftOption="Left"
+                    rightOption="Right"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    thumbBackgroundColor="#FFD700"
+                    thumbBorderColor="#FF6B00"
+                    thumbBorderWidth={4}
+                    thumbBorderRadius={15}
+                />
+            </View>
+
+            {/* Example 6: Active Background Colors */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>6. 🌈 Active Background Colors</Text>
+                <Text style={styles.exampleDescription}>
+                    Purple left, Teal right with gradient (default)
+                </Text>
+                <SwipeSlider
+                    leftOption="Dislike"
+                    rightOption="Like"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    activeBackgroundColorLeft="#9C27B0"
+                    activeBackgroundColorRight="#00BCD4"
+                />
+            </View>
+
+            {/* Example 7: Solid Background (No Gradient) */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>7. 🎯 Solid Background</Text>
+                <Text style={styles.exampleDescription}>
+                    No gradient - classic solid color fill (enableGradient=false)
+                </Text>
+                <SwipeSlider
+                    leftOption="Delete"
+                    rightOption="Archive"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    enableGradient={false}
+                    activeBackgroundColorLeft="#E91E63"
+                    activeBackgroundColorRight="#FFC107"
+                />
+            </View>
+
+            {/* Example 8: Preview Gradient - Always */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>8. 🔍 Preview Gradient - Always</Text>
+                <Text style={styles.exampleDescription}>
+                    Three-color gradient always visible, fades on swipe
+                </Text>
+                <SwipeSlider
+                    leftOption="Reject"
+                    rightOption="Accept"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    previewGradientDisplay="always"
+                    activeBackgroundColorLeft="#F44336"
+                    activeBackgroundColorRight="#4CAF50"
+                    centerBackgroundColor="#616161"
+                />
+            </View>
+
+            {/* Example 9: Preview Gradient - On Thumb Press */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>9. 👆 Preview - On Thumb Press (Default)</Text>
+                <Text style={styles.exampleDescription}>
+                    Gradient appears when touching, fades on swipe
+                </Text>
+                <SwipeSlider
+                    leftOption="Skip"
+                    rightOption="Continue"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    previewGradientDisplay="onThumbPress"
+                    activeBackgroundColorLeft="#FF5722"
+                    activeBackgroundColorRight="#8BC34A"
+                    centerBackgroundColor="#455A64"
+                />
+            </View>
+
+            {/* Example 10: Preview Gradient - Off */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>10. 🚫 Preview Gradient - Off</Text>
+                <Text style={styles.exampleDescription}>
+                    No preview - colors only visible during swipe
+                </Text>
+                <SwipeSlider
+                    leftOption="Cancel"
+                    rightOption="OK"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    previewGradientDisplay="off"
+                    activeBackgroundColorLeft="#D32F2F"
+                    activeBackgroundColorRight="#1976D2"
+                />
+            </View>
+
+            {/* Example 11: Custom Center Gradient Color */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>11. 🎭 Custom Center Color</Text>
+                <Text style={styles.exampleDescription}>
+                    Gradients blend through custom center color (purple)
+                </Text>
+                <SwipeSlider
+                    leftOption="Previous"
+                    rightOption="Next"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    activeBackgroundColorLeft="#FF4081"
+                    activeBackgroundColorRight="#00E5FF"
+                    centerBackgroundColor="#7C4DFF"
+                />
+            </View>
+
+            {/* Example 12: Idle Animation Disabled */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>12. 🔇 No Idle Animation</Text>
+                <Text style={styles.exampleDescription}>
+                    Chevron animation disabled (enableIdleAnimation=false)
+                </Text>
+                <SwipeSlider
+                    leftOption="Undo"
+                    rightOption="Redo"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    enableIdleAnimation={false}
+                />
+            </View>
+
+            {/* Example 13: Custom Idle Animation Speed */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>13. ⚡ Fast Idle Animation</Text>
+                <Text style={styles.exampleDescription}>
+                    Super fast chevron animation (600ms duration)
+                </Text>
+                <SwipeSlider
+                    leftOption="Slow"
+                    rightOption="Fast"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
                     idleAnimationDuration={600}
                 />
             </View>
 
-            {/* Örnek 10: Gradient Center Color Showcase */}
+            {/* Example 14: Custom Chevron Colors */}
             <View style={styles.exampleContainer}>
-                <Text style={styles.exampleTitle}>10. 🎭 Custom Center Gradient</Text>
+                <Text style={styles.exampleTitle}>14. 🎨 Custom Chevron Colors</Text>
                 <Text style={styles.exampleDescription}>
-                    Gradients fade to custom center color + custom chevrons
+                    Orange chevrons left, Blue chevrons right
                 </Text>
                 <SwipeSlider
-                    leftOption="← Swipe Me"
-                    rightOption="Swipe Me →"
+                    leftOption="Back"
+                    rightOption="Forward"
                     onSwipeLeft={handleSwipeLeft}
                     onSwipeRight={handleSwipeRight}
-                    containerWidth={330}
-                    containerHeight={72}
-                    containerBackgroundColor="#EDE7F6"
-                    containerBorderRadius={36}
-                    containerBorderWidth={2}
-                    containerBorderColor="#CE93D8"
-                    containerPadding={7}
-                    thumbSize={62}
-                    thumbBackgroundColor="#FFFFFF"
-                    thumbBorderRadius={31}
-                    thumbBorderWidth={3}
-                    thumbBorderColor="#9C27B0"
-                    activeBackgroundColorLeft="#FF4081"
-                    activeBackgroundColorRight="#00BCD4"
-                    centerBackgroundColor="#F3E5F5"
-                    optionFontSize={15}
-                    optionColor="#4A148C"
-                    swipeThreshold={0.42}
-                    animationDuration={320}
-                    enableIdleAnimation={true}
-                    idleAnimationDuration={1800}
-                    idleChevronColorLeft="#FF4081"
-                    idleChevronColorRight="#00BCD4"
-                    inactiveOptionOpacity={0.2}
+                    idleChevronColorLeft="#FF6D00"
+                    idleChevronColorRight="#2962FF"
+                />
+            </View>
+
+            {/* Example 15: Option Text Size */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>15. 📝 Large Option Text</Text>
+                <Text style={styles.exampleDescription}>
+                    Extra large text size (24px) for better visibility
+                </Text>
+                <SwipeSlider
+                    leftOption="NO"
+                    rightOption="YES"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    optionFontSize={24}
+                />
+            </View>
+
+            {/* Example 16: Option Text Color */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>16. 🖌️ Custom Option Text Color</Text>
+                <Text style={styles.exampleDescription}>
+                    Dark blue text for both options
+                </Text>
+                <SwipeSlider
+                    leftOption="Cancel"
+                    rightOption="Submit"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    optionColor="#0D47A1"
+                />
+            </View>
+
+            {/* Example 17: Different Text Colors Per Side */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>17. 🎨 Text Color Per Side</Text>
+                <Text style={styles.exampleDescription}>
+                    Red text left, Green text right (static colors)
+                </Text>
+                <SwipeSlider
+                    leftOption="Delete"
+                    rightOption="Save"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    leftOptionColor="#D32F2F"
+                    rightOptionColor="#388E3C"
+                    enableTextColorTransition={false}
+                />
+            </View>
+
+            {/* Example 18: Text Color Transition */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>18. 🌊 Smooth Text Color Transition</Text>
+                <Text style={styles.exampleDescription}>
+                    Text colors morph from gray to red/green during swipe
+                </Text>
+                <SwipeSlider
+                    leftOption="Decline"
+                    rightOption="Accept"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    optionColor="#757575"
+                    leftOptionColor="#C62828"
+                    rightOptionColor="#2E7D32"
+                    enableTextColorTransition={true}
+                />
+            </View>
+
+            {/* Example 19: Auto Contrast Text */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>19. 🧪 Auto Contrast Text</Text>
+                <Text style={styles.exampleDescription}>
+                    Text colors auto-adjust based on background brightness
+                </Text>
+                <SwipeSlider
+                    leftOption="Dark BG"
+                    rightOption="Light BG"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    enableAutoContrastText={true}
+                    activeBackgroundColorLeft="#212121"
+                    activeBackgroundColorRight="#FFEB3B"
+                    containerBackgroundColor="#424242"
+                    enableGradient={false}
+                    enableTextColorTransition={false}
+                />
+            </View>
+
+            {/* Example 20: Inactive Option Opacity */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>20. 👻 Inactive Option Fade</Text>
+                <Text style={styles.exampleDescription}>
+                    Non-active option fades to 10% when swiping opposite side
+                </Text>
+                <SwipeSlider
+                    leftOption="Option A"
+                    rightOption="Option B"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    inactiveOptionOpacity={0.1}
+                />
+            </View>
+
+            {/* Example 21: High Swipe Threshold */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>21. 🔒 High Swipe Threshold</Text>
+                <Text style={styles.exampleDescription}>
+                    Must swipe 90% to trigger - for critical actions
+                </Text>
+                <SwipeSlider
+                    leftOption="⚠️ Delete"
+                    rightOption="✓ Safe"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    swipeThreshold={0.9}
+                    activeBackgroundColorLeft="#D32F2F"
+                    activeBackgroundColorRight="#388E3C"
+                />
+            </View>
+
+            {/* Example 22: Low Swipe Threshold */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>22. 🚀 Low Swipe Threshold</Text>
+                <Text style={styles.exampleDescription}>
+                    Only 25% swipe needed - very easy to trigger
+                </Text>
+                <SwipeSlider
+                    leftOption="Quick"
+                    rightOption="Easy"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    swipeThreshold={0.25}
+                />
+            </View>
+
+            {/* Example 23: Fast Animation */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>23. ⚡ Fast Animation</Text>
+                <Text style={styles.exampleDescription}>
+                    Super fast 100ms animation duration
+                </Text>
+                <SwipeSlider
+                    leftOption="Fast"
+                    rightOption="Quick"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    animationDuration={100}
+                />
+            </View>
+
+            {/* Example 24: Slow Animation */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>24. 🐌 Slow Animation</Text>
+                <Text style={styles.exampleDescription}>
+                    Slow and smooth 600ms animation duration
+                </Text>
+                <SwipeSlider
+                    leftOption="Slow"
+                    rightOption="Smooth"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    animationDuration={600}
+                />
+            </View>
+
+            {/* Example 25: Container Padding */}
+            <View style={styles.exampleContainer}>
+                <Text style={styles.exampleTitle}>25. 📐 Custom Container Padding</Text>
+                <Text style={styles.exampleDescription}>
+                    Large padding (12px) - thumb stays well inside bounds
+                </Text>
+                <SwipeSlider
+                    leftOption="Padded"
+                    rightOption="Spaced"
+                    onSwipeLeft={handleSwipeLeft}
+                    onSwipeRight={handleSwipeRight}
+                    containerPadding={12}
+                    containerBorderColor="#9E9E9E"
                 />
             </View>
 
@@ -481,4 +510,3 @@ const styles = StyleSheet.create({
 });
 
 export default SwipeSliderExample;
-

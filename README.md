@@ -93,8 +93,13 @@ If you're using this component outside of Expo, you'll need to modify the import
 - ✅ Adjustable swipe sensitivity
 - ✅ Different active colors for each direction
 - ✅ Gradient background transitions - smooth fade from edges to center (toggleable)
+- ✅ Idle gradient preview - shows left, center, and right colors when button is centered
+- ✅ Preview display modes - 'always', 'onThumbPress', or 'off' for gradient visibility control
 - ✅ Solid background mode - classic full-color backgrounds (set enableGradient={false})
 - ✅ Dynamic option opacity - inactive option fades when swiping opposite direction
+- ✅ Custom text colors per side - different colors for left and right options
+- ✅ Smooth text color transition - colors morph when swiping (toggleable)
+- ✅ Auto contrast text - automatically calculates readable text colors based on background (experimental)
 - ✅ Separate callback functions (onSwipeLeft & onSwipeRight)
 - ✅ Chevron idle animation - wave effect from center to edges
 - ✅ Smart visibility - chevrons only visible when button is centered
@@ -122,12 +127,15 @@ function MyComponent() {
             rightOption="Yes"
             onSwipeLeft={handleSwipeLeft}
             onSwipeRight={handleSwipeRight}
+            optionColor="#666666"                  // Base text color (idle)
             activeBackgroundColorLeft="#FF4444"    // Red gradient from left
             activeBackgroundColorRight="#4CAF50"   // Green gradient from right
-            // Chevrons will automatically use these colors
+            leftOptionColor="#D32F2F"              // Text becomes red when swiping left
+            rightOptionColor="#2E7D32"             // Text becomes green when swiping right
+            // Chevrons will automatically use background colors
             // Left chevrons: #FF4444 (red)
             // Right chevrons: #4CAF50 (green)
-            // Background gradients fade from edges to center
+            // Text colors smoothly transition when swiping
         />
     );
 }
@@ -215,7 +223,11 @@ Center (idle):
 | `leftOptionTextStyle` | `StyleProp<TextStyle>` | `undefined` | Text style for left option only |
 | `rightOptionTextStyle` | `StyleProp<TextStyle>` | `undefined` | Text style for right option only |
 | `optionFontSize` | `number` | `16` | Option text size |
-| `optionColor` | `string` | `'#333333'` | Option text color |
+| `optionColor` | `string` | `'#333333'` | Default option text color (for both options) |
+| `leftOptionColor` | `string` | `optionColor` | Left option text color (defaults to optionColor) |
+| `rightOptionColor` | `string` | `optionColor` | Right option text color (defaults to optionColor) |
+| `enableTextColorTransition` | `boolean` | `true` | Enables smooth color morphing from optionColor to leftOptionColor/rightOptionColor when swiping |
+| `enableAutoContrastText` | `boolean` | `false` | **Experimental**: Automatically calculates contrast text color based on background (white or black) |
 | `inactiveOptionOpacity` | `number` | `0.3` | Opacity of the non-active option when swiping (0-1 range) |
 
 ### Behavior Props
@@ -228,6 +240,7 @@ Center (idle):
 | `activeBackgroundColorRight` | `string` | `'#4CAF50'` | Background color shown when swiping right (gradient end or solid) |
 | `centerBackgroundColor` | `string` | `containerBackgroundColor` | Center color for gradients (only used if enableGradient=true) |
 | `enableGradient` | `boolean` | `true` | Enables gradient backgrounds (if false, uses solid colors) |
+| `previewGradientDisplay` | `'off' \| 'onThumbPress' \| 'always'` | `'onThumbPress'` | Controls three-color idle gradient visibility: 'off'=hidden, 'onThumbPress'=visible only when touching button, 'always'=always visible |
 | `enableIdleAnimation` | `boolean` | `true` | Enables idle chevron animation |
 | `idleAnimationDuration` | `number` | `1200` | Chevron animation loop duration (milliseconds) |
 | `idleChevronColorLeft` | `string` | `activeBackgroundColorLeft` | Left chevron arrows color (defaults to active background color) |
@@ -364,7 +377,7 @@ Center (idle):
 />
 ```
 
-### 9. Solid Background (No Gradient)
+### 9. Solid Background + Static Text Colors
 
 ```tsx
 <SwipeSlider
@@ -374,14 +387,72 @@ Center (idle):
     onSwipeRight={() => console.log('Accepted')}
     activeBackgroundColorLeft="#FF5722"
     activeBackgroundColorRight="#4CAF50"
-    enableGradient={false}  // Solid colors instead of gradient
+    leftOptionColor="#D84315"              // Dark orange
+    rightOptionColor="#2E7D32"             // Dark green
+    enableGradient={false}                 // Solid colors instead of gradient
+    enableTextColorTransition={false}      // Static colors (no color morphing)
     inactiveOptionOpacity={0.2}
 />
 ```
 
-**Effect:** Entire container fills with solid color (no fade to center)
+**Effects:** 
+- Entire container fills with solid color (no gradient fade)
+- Text colors are always their specified colors (no transition from optionColor)
 
-### 10. Custom Center Gradient
+### 10. Idle Gradient Preview - Three-Color Background
+
+**New Feature**: When button is centered (idle), the container shows a beautiful three-color gradient!
+
+```tsx
+<SwipeSlider
+    leftOption="❌ Cancel"
+    rightOption="✓ Confirm"
+    onSwipeLeft={() => console.log('Cancelled')}
+    onSwipeRight={() => console.log('Confirmed')}
+    activeBackgroundColorLeft="#FF4444"       // Red
+    activeBackgroundColorRight="#4CAF50"      // Green
+    centerBackgroundColor="#333333"           // Dark gray
+    enableGradient={true}
+/>
+```
+
+**Visual Effect (Idle State):**
+```
+Container Background (when button is centered):
+┌──────────────────────────────────────────┐
+│  🔴 Red → ⚫ Dark Gray → 🟢 Green       │
+│                                          │
+│  "❌ Cancel"   ⚪ Button   "✓ Confirm"  │
+└──────────────────────────────────────────┘
+
+During Swipe (preview gradient fades proportionally):
+┌──────────────────────────────────────────┐
+│  🔴 Red (intensifying) → fading preview  │
+│                        ←⚪               │
+│  "❌ Cancel" (active)     "✓ Confirm"   │
+└──────────────────────────────────────────┘
+```
+
+**Benefits:**
+- **Visual Preview**: Users see both action colors before swiping
+- **Intuitive Design**: Colors hint at action meanings (red=danger, green=success)
+- **Better UX**: No need to swipe to discover what each direction does
+- **Engaging**: Creates a beautiful, informative idle state
+
+**Display Modes** (`previewGradientDisplay`):
+- `'onThumbPress'` (default): Gradient visible only WHEN touching button - appears on press to guide user, fades out as you swipe
+- `'always'`: Gradient always visible, best for first-time users, fades out as you swipe
+- `'off'`: No preview gradient, only shows colors when swiping
+
+**Smart Fade Effect**:
+When using `'always'` or `'onThumbPress'` modes, the preview gradient intelligently fades out as you swipe:
+- **Center**: 100% opacity
+- **25% swiped**: ~75% opacity
+- **50% swiped**: ~50% opacity
+- **Fully swiped**: 0% opacity
+This ensures the preview doesn't interfere with the active background gradients during interaction.
+
+### 11. Custom Center Gradient Color
 
 ```tsx
 <SwipeSlider
@@ -401,8 +472,82 @@ Center (idle):
 ```
 
 **Gradient Effect:**
-- Left gradient: Pink (#FF4081) → Light Purple (#F3E5F5)
-- Right gradient: Light Purple (#F3E5F5) → Cyan (#00BCD4)
+- Idle: Pink (#FF4081) → Light Purple (#F3E5F5) → Cyan (#00BCD4)
+- Custom center color creates unique color blending effects
+
+### 12. Different Text Colors Per Side
+
+```tsx
+<SwipeSlider
+    leftOption="Delete"
+    rightOption="Confirm"
+    onSwipeLeft={() => console.log('Deleted')}
+    onSwipeRight={() => console.log('Confirmed')}
+    containerBackgroundColor="#F5F5F5"
+    activeBackgroundColorLeft="#FF4444"
+    activeBackgroundColorRight="#4CAF50"
+    leftOptionColor="#D32F2F"      // Red text for delete
+    rightOptionColor="#2E7D32"     // Green text for confirm
+    optionFontSize={16}
+/>
+```
+
+**Color Matching:**
+- Left option text matches left background color theme
+- Right option text matches right background color theme
+- Creates visual consistency and better user understanding
+
+### 13. Auto Contrast Text (Experimental)
+
+```tsx
+<SwipeSlider
+    leftOption="Dark Background"
+    rightOption="Light Background"
+    onSwipeLeft={() => console.log('Left')}
+    onSwipeRight={() => console.log('Right')}
+    activeBackgroundColorLeft="#212121"    // Very dark gray
+    activeBackgroundColorRight="#FFEB3B"   // Yellow
+    enableAutoContrastText={true}          // Auto calculate text colors
+    enableGradient={false}
+    enableTextColorTransition={false}
+/>
+```
+
+**Auto Contrast Logic:**
+- Uses WCAG luminance formula to calculate background brightness
+- Dark backgrounds (luminance < 0.5) → White text (#FFFFFF)
+- Light backgrounds (luminance > 0.5) → Black text (#000000)
+- **Supports both hex codes and color names**:
+  - Hex: `#212121`, `#FFEB3B`, `#FF0000`
+  - Names: `white`, `black`, `red`, `green`, `blue`, `yellow`, `orange`, `purple`, `pink`, `brown`, `gray`, `cyan`, `magenta`
+- **Examples**: 
+  - `#212121` (dark) → Text: `#FFFFFF` (white) ✓
+  - `#FFEB3B` (yellow/light) → Text: `#000000` (black) ✓
+  - `"black"` → Text: `#FFFFFF` (white) ✓
+  - `"white"` → Text: `#000000` (black) ✓
+- Still respects manual `leftOptionColor`/`rightOptionColor` if provided
+- **Note**: This is an experimental feature - test with your color combinations
+
+**Color Transition Effect** (when `enableTextColorTransition={true}`):
+```
+Idle (Center):
+"Delete" (optionColor)    ⚪    "Confirm" (optionColor)
+  #757575 (gray)                   #757575 (gray)
+
+Swiping Left:
+"Delete" (morphing to red) ←⚪    "Confirm" (optionColor fading)
+  #757575 → #D32F2F                #757575 → 0.3 opacity
+
+Swiping Right:
+"Delete" (optionColor fading) ⚪→  "Confirm" (morphing to green)
+  #757575 → 0.3 opacity             #757575 → #2E7D32
+```
+
+- Text colors smoothly transition using overlay technique
+- Base text uses `optionColor` (default color)
+- Overlay text uses `leftOptionColor`/`rightOptionColor` and fades in when swiping
+- Creates a smooth color morph effect
+- Set `enableTextColorTransition={false}` to use static colors (no morphing)
 
 ## Real-World Scenarios
 
@@ -469,11 +614,35 @@ Center (idle):
    - Use red/orange tones for negative actions (#FF4444, #E53935)
    - Use green/blue tones for positive actions (#4CAF50, #2196F3)
    - Ensure contrast between active background colors and container color
+   - **Text Color Customization**:
+     - `optionColor`: Default color for both options (base color when idle)
+     - `leftOptionColor`: Target color for left option when swiping left
+     - `rightOptionColor`: Target color for right option when swiping right
+     - **With Color Transition** (`enableTextColorTransition={true}` - default):
+       - Text color smoothly morphs from optionColor to leftOptionColor/rightOptionColor as you swipe
+       - Uses overlay technique for smooth interpolation
+       - Creates a beautiful color morphing effect
+     - **Without Color Transition** (`enableTextColorTransition={false}`):
+       - Text uses leftOptionColor/rightOptionColor directly (static colors)
+       - No morphing effect, simpler rendering
+       - Better for performance if many sliders
+     - Use darker shades of background colors for text to create color harmony
+     - Example: Background #FF4444 (red) → Text #C62828 (dark red)
+     - If leftOptionColor/rightOptionColor not specified, uses optionColor
+   - **Auto Contrast Text** (`enableAutoContrastText={true}` - experimental):
+     - Automatically calculates text color based on background brightness
+     - Uses WCAG luminance formula for optimal readability
+     - Great for dynamic themes or when you don't want to manually pick colors
+     - Manual colors (`leftOptionColor`/`rightOptionColor`) always override auto calculation
    - **Gradient Effect** (enabled by default with `enableGradient={true}`):
-     - Left gradient: `activeBackgroundColorLeft` → `centerBackgroundColor`
-     - Right gradient: `centerBackgroundColor` → `activeBackgroundColorRight`
+     - **Idle (Button Centered)**: Container shows full three-color gradient
+       - `activeBackgroundColorLeft` (left edge) → `centerBackgroundColor` (center) → `activeBackgroundColorRight` (right edge)
+       - Users can see both swipe directions at once - visual preview of what each direction offers
+     - **Active (Button Swiping)**: Dynamic overlay gradients enhance the swiped direction
+       - Swiping left: Left gradient intensifies
+       - Swiping right: Right gradient intensifies
      - Default `centerBackgroundColor` = `containerBackgroundColor` (seamless integration)
-     - Creates a more natural and elegant visual feedback
+     - Creates a more natural and elegant visual feedback with directional preview
      - Both gradients can be visible simultaneously creating a beautiful dual-gradient effect
    - **Solid Background** (set `enableGradient={false}`):
      - Entire container fills with solid active background color
@@ -481,14 +650,20 @@ Center (idle):
      - Useful for simpler designs or when gradient doesn't fit your theme
 3. **Size Ratio**: Thumb size should be ~80-85% of container height
 4. **Border Radius**: Container border radius should be about half of container height
-5. **Animation**: Use 150-200ms for fast interactions, 300ms for normal
-6. **Inactive Option Opacity**:
+5. **⚠️ Container Border Width Warning**:
+   - **Known Issue**: Adding `containerBorderWidth` may cause the thumb button to shift vertically downward instead of staying centered
+   - **Root Cause**: Border width affects the internal layout calculations, causing vertical alignment issues
+   - **Recommended Solution**: Keep `containerBorderWidth` at default (0) and use `containerBackgroundColor` with opacity or shadow effects for visual borders instead
+   - **Alternative**: If you must use borders, keep `containerPadding` at default (5) to minimize alignment issues
+   - **Current Workaround**: Avoid using `containerBorderWidth` for now, or be prepared for slight vertical misalignment
+6. **Animation**: Use 150-200ms for fast interactions, 300ms for normal
+7. **Inactive Option Opacity**:
    - Default is 0.3 - subtle fade effect for better focus
    - Set to 1.0 to keep both options always fully visible
    - Set to 0.1-0.2 for more dramatic fade effect
    - Creates visual focus on the direction being swiped
    - **Effect**: When swiping right, left option fades to this opacity (and vice versa)
-7. **Container Padding**: 
+8. **Container Padding**: 
    - Default is 5px - provides buffer space for smooth thumb movement
    - Increase for larger containers (e.g., 8-10px for 80-90px height)
    - Decrease for compact designs (e.g., 3-4px for small sliders)
@@ -501,7 +676,45 @@ Center (idle):
      Left Edge: Thumb Center - Max Slide = containerPadding ✓
      Right Edge: Thumb Center + Max Slide = containerWidth - thumbSize - containerPadding ✓
      ```
-8. **Idle Animation**: 
+9. **Text Color Transition**:
+   - Enabled by default (`enableTextColorTransition={true}`)
+   - **With transition**: Text color smoothly morphs from `optionColor` to `leftOptionColor`/`rightOptionColor` as you swipe
+   - **Without transition** (`enableTextColorTransition={false}`): Text uses `leftOptionColor`/`rightOptionColor` directly (static)
+   - Transition creates more engaging visual feedback but uses overlay rendering
+   - Disable for simpler rendering or when you want static colors from the start
+10. **Auto Contrast Text** (Experimental):
+   - Disabled by default (`enableAutoContrastText={false}`)
+   - When enabled, automatically calculates text color based on background brightness
+   - Uses WCAG relative luminance formula for accurate contrast
+   - Dark backgrounds → White text (#FFFFFF)
+   - Light backgrounds → Black text (#000000)
+   - **Use cases**:
+     - Dynamic themes where background colors change
+     - User-generated color selections
+     - Quick prototyping without manual color matching
+   - **Note**: Manual `leftOptionColor`/`rightOptionColor` always take precedence
+11. **Preview Gradient Display Modes**:
+   - Controls when the three-color idle gradient is visible
+   - **Smart Fade Behavior**: In all active modes ('always', 'onThumbPress'), the preview gradient automatically fades out as you swipe
+     - Centered (idle): Preview gradient at full opacity
+     - Swiping: Preview gradient opacity decreases proportionally to swipe distance
+     - Fully swiped: Preview gradient completely invisible, allowing active gradients to shine
+   - **'onThumbPress'** (default): Gradient visible only WHEN touching button
+     - Hidden by default, appears when user touches button
+     - Provides on-demand color preview
+     - Smooth fade-in/fade-out animation (200ms)
+     - Great for "progressive disclosure" UX pattern
+     - Fades out as you swipe
+   - **'always'**: Gradient is always visible
+     - Best for first-time users
+     - Provides constant visual guidance
+     - Users instantly understand swipe directions
+     - Fades out as you swipe
+   - **'off'**: No preview gradient
+     - Minimal idle state
+     - Colors only appear during swipe
+     - More subtle, discovery-based UX
+12. **Idle Animation**: 
    - Enabled by default (enableIdleAnimation={true})
    - 3 chevron arrows create a **synchronized wave** effect from center to edges
    - Perfect synchronization in a single loop - same pattern every repeat
@@ -607,14 +820,17 @@ If you have issues with dependencies, you can disable certain features:
 <SwipeSlider
     leftOption="No"
     rightOption="Yes"
-    enableIdleAnimation={false}  // No vector icons needed
-    enableGradient={false}        // No linear gradient needed
+    enableIdleAnimation={false}         // No vector icons needed
+    enableGradient={false}              // No linear gradient needed
+    enableTextColorTransition={false}   // Simpler text rendering (optional)
     onSwipeLeft={handleLeft}
     onSwipeRight={handleRight}
 />
 ```
 
-**Note:** With both features disabled, the component only requires React Native's core Animated API.
+**Note:** 
+- With `enableIdleAnimation={false}` and `enableGradient={false}`, the component only requires React Native's core Animated API
+- `enableTextColorTransition={false}` is optional - it still works without external dependencies, but disabling it simplifies text rendering
 
 ## License
 

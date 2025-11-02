@@ -18,6 +18,57 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 // Animated LinearGradient oluştur
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
+/**
+ * Yaygın renk adlarını hex kodlarına çevirir
+ */
+const colorNameToHex = (color: string): string => {
+    const colors: Record<string, string> = {
+        'black': '#000000',
+        'white': '#FFFFFF',
+        'red': '#FF0000',
+        'green': '#00FF00',
+        'blue': '#0000FF',
+        'yellow': '#FFFF00',
+        'cyan': '#00FFFF',
+        'magenta': '#FF00FF',
+        'orange': '#FFA500',
+        'purple': '#800080',
+        'pink': '#FFC0CB',
+        'brown': '#A52A2A',
+        'gray': '#808080',
+        'grey': '#808080',
+    };
+    return colors[color.toLowerCase()] || color;
+};
+
+/**
+ * Bir rengin parlaklığını hesaplar ve otomatik kontrast rengi döndürür
+ * @param color - Hex renk kodu (#RRGGBB, #RGB) veya renk adı (white, black, vb.)
+ * @returns Beyaz (#FFFFFF) veya siyah (#000000)
+ */
+const getContrastColor = (color: string): string => {
+    // Renk adını hex'e çevir
+    const hexColor = colorNameToHex(color);
+    
+    // Hex color'ı RGB'ye çevir
+    const hex = hexColor.replace('#', '');
+    const r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.substring(0, 2), 16);
+    const g = parseInt(hex.length === 3 ? hex[1] + hex[1] : hex.substring(2, 4), 16);
+    const b = parseInt(hex.length === 3 ? hex[2] + hex[2] : hex.substring(4, 6), 16);
+    
+    // Geçersiz renk kontrolü
+    if (isNaN(r) || isNaN(g) || isNaN(b)) {
+        console.warn(`[SwipeSlider] Invalid color: ${color}, using default black text`);
+        return '#000000';
+    }
+    
+    // Relative luminance hesapla (WCAG formula)
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    // Luminance 0.5'ten büyükse koyu text, küçükse açık text
+    return luminance > 0.5 ? '#000000' : '#FFFFFF';
+};
+
 export interface SwipeSliderProps {
     // Sol ve sağ seçenek metinleri
     leftOption: string;
@@ -54,6 +105,10 @@ export interface SwipeSliderProps {
     rightOptionTextStyle?: StyleProp<TextStyle>;
     optionFontSize?: number;
     optionColor?: string;
+    leftOptionColor?: string;
+    rightOptionColor?: string;
+    enableTextColorTransition?: boolean;
+    enableAutoContrastText?: boolean;
     inactiveOptionOpacity?: number;
     
     // Kaydırma hassasiyeti (0-1 arası, 0.5 = %50 kaydırma gerekir)
@@ -67,6 +122,7 @@ export interface SwipeSliderProps {
     activeBackgroundColorRight?: string;
     centerBackgroundColor?: string;
     enableGradient?: boolean;
+    previewGradientDisplay?: 'off' | 'onThumbPress' | 'always';
     
     // Idle (boşta) animasyon ayarları
     enableIdleAnimation?: boolean;
@@ -100,6 +156,10 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
     rightOptionTextStyle,
     optionFontSize = 16,
     optionColor = '#333333',
+    leftOptionColor,
+    rightOptionColor,
+    enableTextColorTransition = true,
+    enableAutoContrastText = false,
     inactiveOptionOpacity = 0.3,
     swipeThreshold = 0.4,
     animationDuration = 300,
@@ -107,6 +167,7 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
     activeBackgroundColorRight = '#4CAF50',
     centerBackgroundColor,
     enableGradient = true,
+    previewGradientDisplay = 'onThumbPress',
     enableIdleAnimation = true,
     idleAnimationDuration = 1200,
     idleChevronColorLeft,
@@ -118,6 +179,21 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
     // Chevron renkleri - varsayılan olarak active background renklerini kullan
     const leftChevronColor = idleChevronColorLeft || activeBackgroundColorLeft;
     const rightChevronColor = idleChevronColorRight || activeBackgroundColorRight;
+    
+    // Seçenek text renkleri
+    let finalLeftOptionColor = leftOptionColor || optionColor;
+    let finalRightOptionColor = rightOptionColor || optionColor;
+    let finalOptionColor = optionColor;
+    
+    // Otomatik kontrast modu açıksa, arka plan rengine göre text rengini hesapla
+    if (enableAutoContrastText) {
+        finalLeftOptionColor = leftOptionColor || getContrastColor(activeBackgroundColorLeft);
+        finalRightOptionColor = rightOptionColor || getContrastColor(activeBackgroundColorRight);
+        // optionColor'ı container background'una göre hesapla (merkezdeki text için)
+        finalOptionColor = optionColor === '#333333' 
+            ? getContrastColor(containerBackgroundColor)
+            : optionColor;
+    }
     const pan = useRef(new Animated.Value(0)).current;
     const [isAnimating, setIsAnimating] = useState(false);
     const [isTouching, setIsTouching] = useState(false);
@@ -128,6 +204,11 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
     const chevronOpacity3 = useRef(new Animated.Value(0.3)).current;
     const chevronContainerOpacity = useRef(new Animated.Value(1)).current;
     const optionsOpacity = useRef(new Animated.Value(0)).current;
+    
+    // Preview gradient opacity kontrolü
+    const previewGradientOpacity = useRef(new Animated.Value(
+        previewGradientDisplay === 'always' ? 1 : 0
+    )).current;
     
     // Thumb'ın hareket hesaplamaları
     // Thumb merkez pozisyonu (container'ın sol kenarından thumb'ın sol kenarına olan mesafe)
@@ -238,6 +319,24 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
         })
     ).current;
 
+    // Preview gradient opacity kontrolü
+    useEffect(() => {
+        if (previewGradientDisplay === 'off') {
+            // Kapalı - hiç gösterme
+            previewGradientOpacity.setValue(0);
+        } else if (previewGradientDisplay === 'onThumbPress') {
+            // Sadece basıldığında - thumb'a basıldığında göster
+            Animated.timing(previewGradientOpacity, {
+                toValue: isTouching ? 1 : 0,
+                duration: 200,
+                useNativeDriver: true,
+            }).start();
+        } else {
+            // Always - her zaman göster
+            previewGradientOpacity.setValue(1);
+        }
+    }, [isTouching, previewGradientDisplay]);
+
     // Idle animasyonu - Chevronların opacity animasyonu (senkronize dalga efekti)
     useEffect(() => {
         if (!enableIdleAnimation || disabled || isTouching || isAnimating) {
@@ -337,22 +436,73 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
         extrapolate: 'clamp',
     });
 
+    // Sol seçenek renk geçişi için overlay opacity (sola kaydırıldıkça özel renk belirginleşir)
+    const leftColorTransition = pan.interpolate({
+        inputRange: [-maxSlide, 0],
+        outputRange: [1, 0],
+        extrapolate: 'clamp',
+    });
+
+    // Sağ seçenek renk geçişi için overlay opacity (sağa kaydırıldıkça özel renk belirginleşir)
+    const rightColorTransition = pan.interpolate({
+        inputRange: [0, maxSlide],
+        outputRange: [0, 1],
+        extrapolate: 'clamp',
+    });
+
+    // Preview gradient fade - kaydırma başladığında opacity düşsün
+    const swipeFadeOpacity = pan.interpolate({
+        inputRange: [-maxSlide, 0, maxSlide],
+        outputRange: [0, 1, 0],
+        extrapolate: 'clamp',
+    });
+
     return (
         <View
             style={[
-                styles.container,
                 {
                     width: containerWidth,
                     height: containerHeight,
-                    backgroundColor: containerBackgroundColor,
                     borderRadius: containerBorderRadius,
                     borderWidth: containerBorderWidth,
                     borderColor: containerBorderColor,
-                    paddingHorizontal: containerPadding,
+                    overflow: 'hidden',
                 },
                 containerStyle,
             ]}
         >
+            {/* Container background - üç renkli gradient (sol → merkez → sağ) */}
+            {enableGradient && previewGradientDisplay !== 'off' ? (
+                <Animated.View style={[
+                    StyleSheet.absoluteFillObject, 
+                    { opacity: Animated.multiply(previewGradientOpacity, swipeFadeOpacity) }
+                ]}>
+                    <LinearGradient
+                        colors={[activeBackgroundColorLeft, gradientCenterColor, activeBackgroundColorRight]}
+                        locations={[0, 0.5, 1]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={StyleSheet.absoluteFillObject}
+                    />
+                </Animated.View>
+            ) : null}
+            
+            {/* Fallback background - gradient kapalıysa veya preview off ise */}
+            {(!enableGradient || previewGradientDisplay === 'off') && (
+                <View style={[StyleSheet.absoluteFillObject, { backgroundColor: containerBackgroundColor }]} />
+            )}
+            
+            {/* İçerik container - padding için */}
+            <View
+                style={[
+                    styles.container,
+                    {
+                        width: containerWidth,
+                        height: containerHeight,
+                        paddingHorizontal: containerPadding,
+                    },
+                ]}
+            >
             {/* Sol taraf aktif arka plan */}
             {enableGradient ? (
                 <AnimatedLinearGradient
@@ -470,19 +620,58 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
                         : leftOptionOpacityValue
                 }
             ]}>
-                <Text
-                    style={[
-                        styles.optionText,
-                        {
-                            fontSize: optionFontSize,
-                            color: optionColor,
-                        },
-                        optionTextStyle,
-                        leftOptionTextStyle,
-                    ]}
-                >
-                    {leftOption}
-                </Text>
+                {enableTextColorTransition ? (
+                    <>
+                        {/* Base text (optionColor or auto contrast) */}
+                        <Text
+                            style={[
+                                styles.optionText,
+                                {
+                                    fontSize: optionFontSize,
+                                    color: finalOptionColor,
+                                },
+                                optionTextStyle,
+                                leftOptionTextStyle,
+                            ]}
+                        >
+                            {leftOption}
+                        </Text>
+                        
+                        {/* Overlay text (leftOptionColor) - sola kaydırıldıkça belirginleşir */}
+                        {(leftOptionColor || enableAutoContrastText) && (
+                            <Animated.Text
+                                style={[
+                                    styles.optionText,
+                                    styles.optionTextOverlay,
+                                    {
+                                        fontSize: optionFontSize,
+                                        color: finalLeftOptionColor,
+                                        opacity: leftColorTransition,
+                                    },
+                                    optionTextStyle,
+                                    leftOptionTextStyle,
+                                ]}
+                            >
+                                {leftOption}
+                            </Animated.Text>
+                        )}
+                    </>
+                ) : (
+                    /* Text color transition kapalı - doğrudan finalLeftOptionColor kullan */
+                    <Text
+                        style={[
+                            styles.optionText,
+                            {
+                                fontSize: optionFontSize,
+                                color: finalLeftOptionColor,
+                            },
+                            optionTextStyle,
+                            leftOptionTextStyle,
+                        ]}
+                    >
+                        {leftOption}
+                    </Text>
+                )}
             </Animated.View>
 
             {/* Sağ seçenek */}
@@ -500,19 +689,58 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
                         : rightOptionOpacityValue
                 }
             ]}>
-                <Text
-                    style={[
-                        styles.optionText,
-                        {
-                            fontSize: optionFontSize,
-                            color: optionColor,
-                        },
-                        optionTextStyle,
-                        rightOptionTextStyle,
-                    ]}
-                >
-                    {rightOption}
-                </Text>
+                {enableTextColorTransition ? (
+                    <>
+                        {/* Base text (optionColor or auto contrast) */}
+                        <Text
+                            style={[
+                                styles.optionText,
+                                {
+                                    fontSize: optionFontSize,
+                                    color: finalOptionColor,
+                                },
+                                optionTextStyle,
+                                rightOptionTextStyle,
+                            ]}
+                        >
+                            {rightOption}
+                        </Text>
+                        
+                        {/* Overlay text (rightOptionColor) - sağa kaydırıldıkça belirginleşir */}
+                        {(rightOptionColor || enableAutoContrastText) && (
+                            <Animated.Text
+                                style={[
+                                    styles.optionText,
+                                    styles.optionTextOverlay,
+                                    {
+                                        fontSize: optionFontSize,
+                                        color: finalRightOptionColor,
+                                        opacity: rightColorTransition,
+                                    },
+                                    optionTextStyle,
+                                    rightOptionTextStyle,
+                                ]}
+                            >
+                                {rightOption}
+                            </Animated.Text>
+                        )}
+                    </>
+                ) : (
+                    /* Text color transition kapalı - doğrudan finalRightOptionColor kullan */
+                    <Text
+                        style={[
+                            styles.optionText,
+                            {
+                                fontSize: optionFontSize,
+                                color: finalRightOptionColor,
+                            },
+                            optionTextStyle,
+                            rightOptionTextStyle,
+                        ]}
+                    >
+                        {rightOption}
+                    </Text>
+                )}
             </Animated.View>
 
             {/* Kaydırılabilir buton (thumb) */}
@@ -539,6 +767,7 @@ const SwipeSlider: React.FC<SwipeSliderProps> = ({
                     <View style={styles.thumbLine} />
                 </View>
             </Animated.View>
+            </View>
         </View>
     );
 };
@@ -566,6 +795,9 @@ const styles = StyleSheet.create({
     },
     optionText: {
         fontWeight: '600',
+    },
+    optionTextOverlay: {
+        position: 'absolute',
     },
     thumb: {
         position: 'absolute',
